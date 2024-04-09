@@ -120,7 +120,7 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
-    threshold = 0.6
+    threshold = 0.75
     cam1 = cv2.VideoCapture(1)
     cam2 = cv2.VideoCapture(0)
     cam1.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -135,10 +135,13 @@ def main():
     
     last_prediction = None
     while True:
+        ## 根据第一次运行时出现的画面与参考画面进行比对而选择读取摄像头画面
         ret1, frame1 = cam2.read()
         ret2, frame2 = cam1.read()
+        ## 根据第一次运行时出现的画面与参考画面进行比对而选择性的旋转图像,使摄像头的画面旋转180度，如要
+        ## 旋转摄像头画面，有选择的判断是哪个摄像头需要旋转而将下面两行代码的注释选择性去掉
         #frame1 = cv2.flip(frame1, -1) 
-        frame2 = cv2.flip(frame2, -1)
+        #frame2 = cv2.flip(frame2, -1)
         combined_frame = cv2.hconcat([frame1, frame2])
         if cv2.waitKey(1) & 0xFF == ord(' '):
             recording = not recording

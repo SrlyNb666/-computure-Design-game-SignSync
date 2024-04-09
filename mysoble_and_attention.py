@@ -68,22 +68,16 @@ brightness_decrease = transforms.Compose([
 root = "/home/pyquan/sysb/sysb_data/pin_jie/pinjie_end"
 batch_size = 32
 def data_loader():
-    # 创建数据集
     dataset = ImageFolder(root)
     classes_num = len(dataset.classes)
-    # 计算训练集和测试集的大小
-    train_size = int(0.85 * len(dataset))  # 假设训练集占总数据集的80%
-    # 设置随机种子
+    train_size = int(0.85 * len(dataset)) 
     torch.manual_seed(0)
-    # 生成索引
     indices = np.random.permutation(len(dataset))
     train_indices = indices[:train_size]
     test_indices = indices[train_size:]
-    # 创建训练集的数据集实例
     train_dataset = ImageFolder(root, transform=transformations)
     train_set = Subset(train_dataset, train_indices)
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=4)
-    # 创建测试集的数据集实例
     test_dataset = ImageFolder(root, transform=brightness_decrease)
     test_set = Subset(test_dataset, test_indices)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=4)    
@@ -161,7 +155,7 @@ from torch.cuda.amp import GradScaler, autocast
         
 def saveUsedWeights(model, epoch, classes):
     model_info = {'model': model.state_dict(), 'classes': classes}
-    torch.save(model_info, '/home/pyquan/Project/cumputer_design_game/model/model.pth')
+    torch.save(model_info, 'model/model.pth')
     print('已保存第{}轮模型'.format(epoch+1))
 def testAccuracy():
     model.eval()
@@ -311,18 +305,6 @@ def testBatch():
 
 
 
-import datetime
-def write_training_log(accuracy, train_duration, root, work):
-    log = "训练结束，准确度："
-    for class_name, acc in accuracy.items():
-        log += f"{class_name}: {acc:.3f}%, "
-    log += f"训练时长: {train_duration}秒"
-    log += f"数据集：{root}"
-    log += f"网络：{work}" 
-    with open("/home/pyquan/sysb/training_log.txt", "a") as file:
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f"{timestamp}: {log}\n")
-    print("saved_log") 
 if __name__ == "__main__":
    
 
@@ -346,7 +328,7 @@ if __name__ == "__main__":
     print('Running time: %s Seconds'%(train_duration))
     
     
-    path = "/home/pyquan/Project/cumputer_design_game/model/model.pth"
+    path = "model/model.pth"
     model_info = torch.load(path)
     classes = model_info['classes']
     classes_num = len(classes)
@@ -364,21 +346,7 @@ if __name__ == "__main__":
     test_duration = end_time - start_time
     print('Running time: %s Seconds'%(test_duration))
 
-    # import torch
-    # from thop import profile
-    # model = Network(classes_num, pixels_per_block)
-    # inputs1 = torch.randn(1, 3, 128,164)
-    # inputs2 = torch.randn(1, 3, 128,164)
-    # # 开始计时
-    # start_time = time.time()
-    # # 直接将输入传递给模型实例
-    # output = model(inputs1, inputs2)
-    # end_time = time.time()
-    # forward_time = end_time - start_time
-    # print(f"One forward propagation time: {forward_time} seconds")
-    # flops, params = profile(model, inputs=(inputs1, inputs2))
-    # print('flops: ', flops, 'params: ', params)
-
+    
 
 
 
